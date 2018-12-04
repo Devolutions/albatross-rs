@@ -29,9 +29,8 @@ mkdir /opt/albatross/cmake
 cd ubuntu-14.04-i386
 docker build . -t ubuntu-14.04-i386
 
-docker run -it -v /opt/albatross/sysroot/ubuntu-14.04-i386:/sysroot ubuntu-14.04-i386 /bin/bash
-cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr
-exit
+docker run -v /opt/albatross/sysroot/ubuntu-14.04-i386:/sysroot ubuntu-14.04-i386 \
+/bin/bash -c "cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr"
 
 cp toolchain.cmake /opt/albatross/cmake/ubuntu-14.04-i386.cmake
 ```
@@ -42,9 +41,8 @@ cp toolchain.cmake /opt/albatross/cmake/ubuntu-14.04-i386.cmake
 cd ubuntu-14.04-amd64
 docker build . -t ubuntu-14.04-amd64
 
-docker run -it -v /opt/albatross/sysroot/ubuntu-14.04-amd64:/sysroot ubuntu-14.04-amd64 /bin/bash
-cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr
-exit
+docker run -v /opt/albatross/sysroot/ubuntu-14.04-amd64:/sysroot ubuntu-14.04-amd64 \
+/bin/bash -c "cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr"
 
 cp toolchain.cmake /opt/albatross/cmake/ubuntu-14.04-amd64.cmake
 ```

@@ -1,0 +1,13 @@
+[package]
+name = "albatross"
+version = "0.1.0"
+authors = ["Marc-André Moreau <marcandre.moreau@gmail.com>"]
+
+[dependencies]
+toml = "^0.4"
+regex = "1.0"
+serde = "^1.0"
+serde_derive = "^1.0"
+easy_process = "^0.1"
+lazy_static = "1.0"
+clap = { version = "2.31", features = ["yaml"] }
