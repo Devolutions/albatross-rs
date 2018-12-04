@@ -2,8 +2,6 @@
 use std::env;
 use std::path::{PathBuf};
 
-use fs_extra::dir::*;
-
 #[derive(Clone)]
 pub struct Config {
     pub albatross_home: PathBuf,
@@ -49,11 +47,11 @@ impl Config {
         self.cmake_dir = self.albatross_home.clone().join("cmake");
         self.tmp_dir = self.albatross_home.clone().join("tmp");
 
-        create_all(&self.albatross_home, false).unwrap();
-        create_all(&self.toolchain_dir, false).unwrap();
-        create_all(&self.sysroot_dir, false).unwrap();
-        create_all(&self.cmake_dir, false).unwrap();
-        create_all(&self.tmp_dir, false).unwrap();
+        fs_extra::dir::create_all(&self.albatross_home, false).unwrap();
+        fs_extra::dir::create_all(&self.toolchain_dir, false).unwrap();
+        fs_extra::dir::create_all(&self.sysroot_dir, false).unwrap();
+        fs_extra::dir::create_all(&self.cmake_dir, false).unwrap();
+        fs_extra::dir::create_all(&self.tmp_dir, false).unwrap();
     }
 
     pub fn load() -> Self {

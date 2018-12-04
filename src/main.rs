@@ -2,8 +2,6 @@
 extern crate clap;
 
 extern crate fs_extra;
-//use fs_extra::dir::*;
-//use fs_extra::error::*;
 
 use std::path::{PathBuf};
 
@@ -56,7 +54,7 @@ fn run_toolchain(_input: &str, config: &Config) {
     }
 
     let src_file = format!("{}", llvm_basename);
-    let dst_file = format!("{}/llvm-{}", config.toolchain_dir.display(), llvm_version);
+    let dst_file = format!("{}/llvm", config.toolchain_dir.display());
 
     let mut options = fs_extra::dir::CopyOptions::new();
     options.overwrite = true;
