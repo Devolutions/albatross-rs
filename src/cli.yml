@@ -2,13 +2,20 @@ name: albatross
 author: Marc-André Moreau <marcandre.moreau@gmail.com>
 about: A cross-compilation toolchain and sysroot creation helper 
 args:
-        - config:
-            long: config
-            short: c
-            takes_value: true
-            global: true
-            help: Sets the configuration file to use
+    - config:
+        long: config
+        short: c
+        takes_value: true
+        global: true
+        help: Sets the configuration file to use
 subcommands:
+    - toolchain:
+          about: "download and install compiler toolchain"
+          args:
+              - input:
+                    index: 1
+                    takes_value: true
+                    required: true
     - sysroot:
         about: "build and install sysroot"
         args:

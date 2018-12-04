@@ -1,23 +1,66 @@
-use std::fs;
-use std::path::Path;
-use std::error::Error;
 
-use toml;
+use std::env;
+use std::path::{PathBuf};
 
-#[derive(Serialize,Deserialize)]
+use fs_extra::dir::*;
+
+#[derive(Clone)]
 pub struct Config {
-    pub output: String,
+    pub albatross_home: PathBuf,
+    pub toolchain_dir: PathBuf,
+    pub sysroot_dir: PathBuf,
+    pub cmake_dir: PathBuf,
+    pub tmp_dir: PathBuf,
 }
 
 impl Config {
-    pub fn new<P: AsRef<Path>>(path: P) -> Result<Self, Box<Error>> {
-        let contents = fs::read_to_string(path)?;
-        Config::new_from_string(&contents)
+    pub fn new() -> Self {
+        Config {
+            albatross_home: PathBuf::new(),
+            toolchain_dir: PathBuf::new(),
+            sysroot_dir: PathBuf::new(),
+            cmake_dir: PathBuf::new(),
+            tmp_dir: PathBuf::new(),
+        }
     }
 
-    pub fn new_from_string(contents: &str) -> Result<Self, Box<Error>> {
-        let config: Config = toml::from_str(&contents)?;
-        Ok(config)
+    pub fn load_default(&mut self) {
+
+        let home_env = if cfg!(target_os = "windows") {
+            "USERPROFILE"
+        } else {
+            "HOME"
+        };
+
+        let home_dir = env::var(home_env).unwrap();
+
+        self.albatross_home = PathBuf::from(home_dir).join(".albatross");
+    }
+
+    pub fn load_env(&mut self) {
+        if let Ok(val) = env::var("ALBATROSS_HOME") {
+            self.albatross_home = PathBuf::from(Some(val).unwrap());
+        }
+    }
+
+    pub fn setup(&mut self) {
+        self.toolchain_dir = self.albatross_home.clone().join("toolchain");
+        self.sysroot_dir = self.albatross_home.clone().join("sysroot");
+        self.cmake_dir = self.albatross_home.clone().join("cmake");
+        self.tmp_dir = self.albatross_home.clone().join("tmp");
+
+        create_all(&self.albatross_home, false).unwrap();
+        create_all(&self.toolchain_dir, false).unwrap();
+        create_all(&self.sysroot_dir, false).unwrap();
+        create_all(&self.cmake_dir, false).unwrap();
+        create_all(&self.tmp_dir, false).unwrap();
+    }
+
+    pub fn load() -> Self {
+        let mut config = Config::new();
+        config.load_default();
+        config.load_env();
+        config.setup();
+        config
     }
 }
-
