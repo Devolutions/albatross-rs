@@ -1,58 +1,46 @@
 
-## Installing clang+llvm
+## Installing albatross
 
-https://releases.llvm.org/download.html
+Download, compile and install albatross:
 
 ```
-wget https://releases.llvm.org/6.0.1/clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-tar -xf clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-sudo mv clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04/ /opt/llvm
+git clone https://github.com/devolutions/albatross-rs.git
+cd albatross-rs
+cargo install
+```
 
+Add required environment variables:
+
+```
 nano ~/.bashrc
-export PATH=$PATH:/opt/llvm/bin
+export ALBATROSS_HOME=$HOME/.albatross
+export PATH=$ALBATROSS_HOME/toolchain/llvm/bin:$PATH
 ```
 
-## Create working directory
+## Installing toolchain
+
+This will download and install clang+llvm 7.0.0 from the official website:
 
 ```
-sudo mkdir /opt/albatross
-sudo chmod 777 /opt/albatross
-mkdir /opt/albatross/sysroot
-mkdir /opt/albatross/cmake
+albatross toolchain install
 ```
 
-## Building sysroots
+## Installing sysroots
 
-### ubuntu-14.04-i386
-
-```
-cd ubuntu-14.04-i386
-docker build . -t ubuntu-14.04-i386
-
-docker run -v /opt/albatross/sysroot/ubuntu-14.04-i386:/sysroot ubuntu-14.04-i386 \
-/bin/bash -c "cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr"
-
-cp toolchain.cmake /opt/albatross/cmake/ubuntu-14.04-i386.cmake
-```
-
-### ubuntu-14.04-amd64
+Build and install sysroots (requires docker):
 
 ```
-cd ubuntu-14.04-amd64
-docker build . -t ubuntu-14.04-amd64
-
-docker run -v /opt/albatross/sysroot/ubuntu-14.04-amd64:/sysroot ubuntu-14.04-amd64 \
-/bin/bash -c "cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr"
-
-cp toolchain.cmake /opt/albatross/cmake/ubuntu-14.04-amd64.cmake
+cd albatross-rs
+albatross sysroot ubuntu-14.04-i386
+albatross sysroot ubuntu-14.04-amd64
 ```
 
-## Cross-compilation
+## CMake cross-compilation:
 
 ```
 mkdir build-i386 && cd build-i386
-cmake -DCMAKE_TOOLCHAIN_FILE="/opt/albatross/cmake/ubuntu-14.04-i386.cmake" ..
+cmake -DCMAKE_TOOLCHAIN_FILE=$ALBATROSS_HOME/cmake/ubuntu-14.04-i386.cmake ..
 
 mkdir build-amd64 && cd build-amd64
-cmake -DCMAKE_TOOLCHAIN_FILE="/opt/albatross/cmake/ubuntu-14.04-amd64.cmake" ..
+cmake -DCMAKE_TOOLCHAIN_FILE=$ALBATROSS_HOME/cmake/ubuntu-14.04-amd64.cmake ..
 ```
