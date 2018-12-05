@@ -9,7 +9,7 @@ use std::env;
 use std::path::Path;
 use std::error::Error;
 
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 use clap::App;
 
@@ -38,7 +38,8 @@ fn run_toolchain(_input: &str, config: &Config) {
 
     if !PathBuf::from(llvm_filename.clone()).exists() {
         println!("downloading {}", llvm_filename);
-        let _ = Command::new("wget")
+        let _ = Command::new("curl")
+            .arg("-O")
             .arg(download_url)
             .output()
             .expect("failed to download clang+llvm");
@@ -71,6 +72,16 @@ fn run_sysroot(input: &str, config: &Config) {
     let cwd = env::current_dir().unwrap();
     let sysroot_name = cwd.file_name().unwrap().to_str().unwrap();
 
+    let _ = Command::new("docker")
+        .arg("build")
+        .arg(".")
+        .arg("-t")
+        .arg(sysroot_name)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+        .expect("failed to execute docker");
+
     let docker_v = format!("{}/{}:/sysroot", config.sysroot_dir.display(), sysroot_name);
     let docker_c = "cd /sysroot && cp -R -L /lib lib && cp -R -L /usr usr";
 
@@ -82,6 +93,8 @@ fn run_sysroot(input: &str, config: &Config) {
         .arg("/bin/bash")
         .arg("-c")
         .arg(docker_c)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
         .expect("failed to execute docker");
 
@@ -91,6 +104,8 @@ fn run_sysroot(input: &str, config: &Config) {
     let _ = Command::new("cp")
         .arg(src_file)
         .arg(dst_file)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
         .expect("failed to install cmake toolchain file");
 
