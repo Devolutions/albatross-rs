@@ -9,7 +9,7 @@ RUN apt-get install -y \
     libxtst-dev \
     libxcursor-dev \
     libxrandr-dev \
-    libgtk3-dev \
+    libgtk-3-dev \
     libappindicator3-dev \
     libnotify-dev \
     libssl-dev
