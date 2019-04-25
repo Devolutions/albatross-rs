@@ -10,6 +10,7 @@ RUN apt-get install -y \
     libxcursor-dev \
     libxrandr-dev \
     libgtk-3-dev \
+    libglib2.0-dev \
     libappindicator3-dev \
     libnotify-dev \
     libssl-dev
